@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In — TrustVault{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto my-12 bg-slate-950 p-8 rounded-xl border border-slate-800 shadow-2xl">
+    <div class="text-center mb-6">
+        <h1 class="text-2xl font-bold tracking-tight text-white">TrustVault Access</h1>
+        <p class="text-sm text-slate-400 mt-1">Authenticate to reach encrypted documents</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('auth.login') }}" class="space-y-4">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1" for="email">Email Address</label>
+            <input type="email" id="email" name="email" required
+                class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+        </div>
+        <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1" for="password">Password</label>
+            <input type="password" id="password" name="password" required
+                class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+        </div>
+        <button type="submit" class="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 rounded-lg font-medium text-white transition text-sm">
+            Sign In
+        </button>
+    </form>
+
+    <div class="mt-8 pt-6 border-t border-slate-800">
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">One-Click Seed Accounts (For Evaluators)</p>
+        <div class="space-y-2">
+            <button onclick="fillLogin('admin@trustvault.local', 'AdminSecure2026!')"
+                class="w-full text-left px-3 py-2 rounded bg-slate-900 hover:bg-slate-800 border border-rose-900/50 text-xs flex justify-between items-center transition">
+                <span><strong class="text-rose-400">Admin:</strong> admin@trustvault.local</span>
+                <span class="text-slate-500 font-mono">Fill &rarr;</span>
+            </button>
+            <button onclick="fillLogin('owner@trustvault.local', 'OwnerSecure2026!')"
+                class="w-full text-left px-3 py-2 rounded bg-slate-900 hover:bg-slate-800 border border-blue-900/50 text-xs flex justify-between items-center transition">
+                <span><strong class="text-blue-400">Owner:</strong> owner@trustvault.local</span>
+                <span class="text-slate-500 font-mono">Fill &rarr;</span>
+            </button>
+            <button onclick="fillLogin('viewer@trustvault.local', 'ViewerSecure2026!')"
+                class="w-full text-left px-3 py-2 rounded bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs flex justify-between items-center transition">
+                <span><strong class="text-slate-300">Viewer:</strong> viewer@trustvault.local</span>
+                <span class="text-slate-500 font-mono">Fill &rarr;</span>
+            </button>
+            <button onclick="fillLogin('outsider@trustvault.local', 'OutsiderSecure2026!')"
+                class="w-full text-left px-3 py-2 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs flex justify-between items-center transition text-slate-400">
+                <span><strong class="text-slate-400">Outsider (0 perms):</strong> outsider@trustvault.local</span>
+                <span class="text-slate-500 font-mono">Fill &rarr;</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+function fillLogin(email, password) {
+    document.getElementById('email').value = email;
+    document.getElementById('password').value = password;
+}
+</script>
+{% endblock %}

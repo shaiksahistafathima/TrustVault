@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Access Denied (403) — TrustVault{% endblock %}
+{% block content %}
+<div class="max-w-md mx-auto my-12 text-center bg-slate-950 p-8 rounded-xl border border-rose-900/60">
+    <div class="text-4xl mb-3">⛔</div>
+    <h1 class="text-2xl font-bold text-rose-400">403 — Access Refused</h1>
+    <p class="text-sm text-slate-300 mt-2">
+        You do not possess the required explicit authorization to access or modify this document.
+    </p>
+    <div class="mt-4 p-3 bg-slate-900 rounded-lg text-xs text-slate-400 border border-slate-800">
+        🛡️ <strong>Security Notice:</strong> This unauthorized access attempt has been permanently recorded in the cryptographic audit trail with your identity, IP address, and timestamp.
+    </div>
+    <div class="mt-6">
+        <a href="{{ url_for('docs.dashboard') }}" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-xs text-white font-medium transition">
+            Return to Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}

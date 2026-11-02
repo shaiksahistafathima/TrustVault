@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard — TrustVault{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+        <div>
+            <h1 class="text-2xl font-bold tracking-tight text-white">Document Repository</h1>
+            <p class="text-sm text-slate-400">Secure storage with zero public reachability and real-time permission enforcement</p>
+        </div>
+        {% if current_user.role in ['ADMIN', 'OWNER'] %}
+        <a href="{{ url_for('docs.upload') }}" class="inline-flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-sm font-medium text-white transition shadow-lg shadow-indigo-600/20">
+            <span>+</span>
+            <span>Upload Document</span>
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- Section 1: Documents Owned by User -->
+    <div>
+        <div class="flex items-center space-x-2 mb-4">
+            <h2 class="text-lg font-semibold text-white">Documents You Own</h2>
+            <span class="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 font-mono">{{ owned_docs|length }}</span>
+        </div>
+
+        {% if owned_docs %}
+        <div class="overflow-x-auto rounded-lg border border-slate-800 bg-slate-950">
+            <table class="w-full text-left text-sm">
+                <thead class="bg-slate-900/60 text-xs uppercase font-semibold text-slate-400 border-b border-slate-800">
+                    <tr>
+                        <th class="px-4 py-3">Document Title</th>
+                        <th class="px-4 py-3">Category</th>
+                        <th class="px-4 py-3">File Size</th>
+                        <th class="px-4 py-3">Uploaded</th>
+                        <th class="px-4 py-3 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800 text-slate-300">
+                    {% for doc in owned_docs %}
+                    <tr class="hover:bg-slate-900/40 transition">
+                        <td class="px-4 py-3 font-medium text-white">
+                            <a href="{{ url_for('docs.document_detail', document_id=doc.id) }}" class="hover:text-indigo-400 transition flex items-center space-x-2">
+                                <span class="text-slate-500">📄</span>
+                                <span>{{ doc.title }}</span>
+                            </a>
+                        </td>
+                        <td class="px-4 py-3"><span class="px-2 py-0.5 text-xs rounded bg-slate-800 text-slate-300">{{ doc.category }}</span></td>
+                        <td class="px-4 py-3 font-mono text-xs text-slate-400">{{ (doc.file_size / 1024)|round(1) }} KB</td>
+                        <td class="px-4 py-3 text-xs text-slate-400">{{ doc.created_at[:10] }}</td>
+                        <td class="px-4 py-3 text-right space-x-2">
+                            <a href="{{ url_for('docs.download_document', document_id=doc.id) }}" class="text-xs px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-indigo-300 font-medium transition">Download</a>
+                            <a href="{{ url_for('docs.document_detail', document_id=doc.id) }}" class="text-xs px-2.5 py-1 rounded bg-indigo-950/60 hover:bg-indigo-900 text-indigo-300 border border-indigo-800 font-medium transition">Manage Access</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="p-8 text-center rounded-lg border border-dashed border-slate-800 bg-slate-950/50">
+            <p class="text-sm text-slate-400">You haven't uploaded any documents yet.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Section 2: Documents Shared with User -->
+    <div>
+        <div class="flex items-center space-x-2 mb-4">
+            <h2 class="text-lg font-semibold text-white">Documents Shared with You</h2>
+            <span class="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 font-mono">{{ shared_docs|length }}</span>
+        </div>
+
+        {% if shared_docs %}
+        <div class="overflow-x-auto rounded-lg border border-slate-800 bg-slate-950">
+            <table class="w-full text-left text-sm">
+                <thead class="bg-slate-900/60 text-xs uppercase font-semibold text-slate-400 border-b border-slate-800">
+                    <tr>
+                        <th class="px-4 py-3">Document Title</th>
+                        <th class="px-4 py-3">Owner</th>
+                        <th class="px-4 py-3">Your Permission</th>
+                        <th class="px-4 py-3">File Size</th>
+                        <th class="px-4 py-3 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800 text-slate-300">
+                    {% for doc in shared_docs %}
+                    <tr class="hover:bg-slate-900/40 transition">
+                        <td class="px-4 py-3 font-medium text-white">
+                            <a href="{{ url_for('docs.document_detail', document_id=doc.id) }}" class="hover:text-indigo-400 transition flex items-center space-x-2">
+                                <span class="text-slate-500">📄</span>
+                                <span>{{ doc.title }}</span>
+                            </a>
+                        </td>
+                        <td class="px-4 py-3 text-slate-400 text-xs">{{ doc.owner_name }}</td>
+                        <td class="px-4 py-3">
+                            <span class="px-2 py-0.5 text-xs rounded font-semibold
+                                {% if doc.user_permission == 'EDIT' %}bg-amber-950/60 text-amber-300 border border-amber-800
+                                {% else %}bg-blue-950/60 text-blue-300 border border-blue-800{% endif %}">
+                                {{ doc.user_permission }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-3 font-mono text-xs text-slate-400">{{ (doc.file_size / 1024)|round(1) }} KB</td>
+                        <td class="px-4 py-3 text-right space-x-2">
+                            <a href="{{ url_for('docs.download_document', document_id=doc.id) }}" class="text-xs px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-indigo-300 font-medium transition">Download</a>
+                            <a href="{{ url_for('docs.document_detail', document_id=doc.id) }}" class="text-xs px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium transition">View Details</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="p-8 text-center rounded-lg border border-dashed border-slate-800 bg-slate-950/50">
+            <p class="text-sm text-slate-400">No external documents have been shared with your account.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

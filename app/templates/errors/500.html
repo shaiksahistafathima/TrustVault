@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Internal Server Error (500) — TrustVault{% endblock %}
+{% block content %}
+<div class="max-w-md mx-auto my-12 text-center bg-slate-950 p-8 rounded-xl border border-slate-800">
+    <div class="text-4xl mb-3">⚠️</div>
+    <h1 class="text-2xl font-bold text-white">500 — Server Error</h1>
+    <p class="text-sm text-slate-400 mt-2">An internal error occurred. Security perimeter remains intact.</p>
+    <div class="mt-6">
+        <a href="{{ url_for('docs.dashboard') }}" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-xs text-white font-medium transition">
+            Return to Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}
