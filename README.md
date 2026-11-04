@@ -1,13 +1,13 @@
-# TrustVault — Tamper-Proof Document Sharing Platform
+# TrustVault — Secure Document Sharing with a Tamper-Evident Audit Trail
 
 > **RISE Assessment Submission**  
-> Built for zero-leak document access, non-repudiable auditability, and instant permission revocation.
+> Built for server-side document access control, auditable activity, and immediate permission revocation on subsequent requests.
 
 ---
 
-## 🔑 Seed User Accounts for Evaluators
+## Local Demo Accounts for Evaluators
 
-The database is pre-seeded with accounts for all roles. You can sign in directly or use the one-click credential buttons on the login screen:
+Demo accounts are created locally by running `python seed.py`. These credentials are for local evaluation only. Never use the demo accounts in production.
 
 | Role | Email Address | Password | Permissions & Scope |
 | :--- | :--- | :--- | :--- |
@@ -67,7 +67,7 @@ The database is pre-seeded with accounts for all roles. You can sign in directly
 ## 🚀 Setup & Local Execution (Clean Clone)
 
 ### Prerequisites
-- Python 3.10+ (Standard library + Flask & Werkzeug)
+- Python 3.10+
 
 ### Quick Start
 ```bash
@@ -75,10 +75,13 @@ The database is pre-seeded with accounts for all roles. You can sign in directly
 git clone https://github.com/your-username/trustvault.git
 cd trustvault
 
-# 2. Run database seed script
+# 2. Install dependencies
+python -m pip install -r requirements.txt
+
+# 3. Run database seed script
 python seed.py
 
-# 3. Start the application
+# 4. Start the application
 python run.py
 ```
 Open **http://127.0.0.1:5000** in your browser.
@@ -87,7 +90,7 @@ Open **http://127.0.0.1:5000** in your browser.
 
 ## 🧪 Automated Security Test Suite
 
-The test suite contains **14 adversarial unit and integration tests** proving access control, audit integrity, and revocation speed:
+The test suite contains **21 automated tests** covering access control, audit integrity, CSRF protection, upload validation, and permission revocation:
 
 ```bash
 python -m unittest discover -s tests
