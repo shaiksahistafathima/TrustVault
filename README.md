@@ -72,7 +72,7 @@ Demo accounts are created locally by running `python seed.py`. These credentials
 ### Quick Start
 ```bash
 # 1. Clone the repository
-git clone https://github.com/your-username/trustvault.git
+git clone https://github.com/shaiksahistafathima/TrustVault.git
 cd trustvault
 
 # 2. Install dependencies
