@@ -52,6 +52,71 @@ def compute_row_hash_v2(
     return hashlib.sha256(canonical_payload.encode("utf-8")).hexdigest()
 
 
+def append_audit_event(
+    conn, action, status, actor_id=None, actor_email=None,
+    document_id=None, ip_address="127.0.0.1",
+    user_agent="Unknown", details=None
+):
+    """
+    Append a Version 2 audit event using an existing database connection.
+
+    The caller controls the transaction. This allows an account change
+    and its corresponding audit event to commit or roll back together.
+    """
+
+    log_id = str(uuid.uuid4())
+    timestamp = datetime.now(timezone.utc).isoformat()
+    details_str = json.dumps(details or {}, sort_keys=True)
+
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT sequence_number, row_hash
+        FROM audit_logs
+        ORDER BY sequence_number DESC
+        LIMIT 1
+    """)
+
+    last_row = cursor.fetchone()
+
+    if last_row:
+        next_seq = last_row["sequence_number"] + 1
+        prev_hash = last_row["row_hash"]
+    else:
+        next_seq = 1
+        prev_hash = GENESIS_PREV_HASH
+
+    row_hash = compute_row_hash_v2(
+        seq=next_seq,
+        log_id=log_id,
+        timestamp=timestamp,
+        actor_id=actor_id,
+        actor_email=actor_email,
+        action=action,
+        doc_id=document_id,
+        status=status,
+        ip=ip_address,
+        user_agent=user_agent,
+        details=details_str,
+        prev_hash=prev_hash
+    )
+
+    cursor.execute("""
+        INSERT INTO audit_logs (
+            sequence_number, id, timestamp, actor_id, actor_email,
+            action, document_id, status, ip_address, user_agent,
+            details, prev_hash, row_hash, hash_version
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 2)
+    """, (
+        next_seq, log_id, timestamp, actor_id, actor_email,
+        action, document_id, status, ip_address, user_agent,
+        details_str, prev_hash, row_hash
+    ))
+
+    return log_id
+
+
 def log_audit_event(
     action, status, actor_id=None, actor_email=None,
     document_id=None, ip_address="127.0.0.1",
@@ -59,63 +124,21 @@ def log_audit_event(
 ):
     """Append a Version 2 tamper-evident audit event."""
 
-    log_id = str(uuid.uuid4())
-    timestamp = datetime.now(timezone.utc).isoformat()
-    details_str = json.dumps(details or {}, sort_keys=True)
-
     with get_db() as conn:
         # Acquire the SQLite write lock before reading the latest sequence.
         conn.execute("BEGIN IMMEDIATE")
 
-        cursor = conn.cursor()
-
-        cursor.execute("""
-            SELECT sequence_number, row_hash
-            FROM audit_logs
-            ORDER BY sequence_number DESC
-            LIMIT 1
-        """)
-
-        last_row = cursor.fetchone()
-
-        if last_row:
-            next_seq = last_row["sequence_number"] + 1
-            prev_hash = last_row["row_hash"]
-        else:
-            next_seq = 1
-            prev_hash = GENESIS_PREV_HASH
-
-        hash_version = 2
-
-        row_hash = compute_row_hash_v2(
-            seq=next_seq,
-            log_id=log_id,
-            timestamp=timestamp,
+        return append_audit_event(
+            conn=conn,
+            action=action,
+            status=status,
             actor_id=actor_id,
             actor_email=actor_email,
-            action=action,
-            doc_id=document_id,
-            status=status,
-            ip=ip_address,
+            document_id=document_id,
+            ip_address=ip_address,
             user_agent=user_agent,
-            details=details_str,
-            prev_hash=prev_hash
+            details=details
         )
-
-        cursor.execute("""
-            INSERT INTO audit_logs (
-                sequence_number, id, timestamp, actor_id, actor_email,
-                action, document_id, status, ip_address, user_agent,
-                details, prev_hash, row_hash, hash_version
-            )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (
-            next_seq, log_id, timestamp, actor_id, actor_email,
-            action, document_id, status, ip_address, user_agent,
-            details_str, prev_hash, row_hash, hash_version
-        ))
-
-    return log_id
 
 
 def verify_audit_chain():
