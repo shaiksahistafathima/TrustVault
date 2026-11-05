@@ -25,7 +25,10 @@ def create_app(config_class=Config):
     # Inject current user into all Jinja templates
     @app.context_processor
     def inject_user():
-        return {"current_user": get_current_user()}
+        return {
+            "current_user": get_current_user(),
+            "show_demo_accounts": app.config["SHOW_DEMO_ACCOUNTS"],
+        }
 
     # Security Headers Middleware
     @app.after_request

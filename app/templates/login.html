@@ -34,6 +34,7 @@
         </button>
     </form>
 
+{% if show_demo_accounts %}
     <div class="mt-8 pt-6 border-t border-slate-800">
         <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
             One-Click Seed Accounts (For Evaluators)
@@ -75,6 +76,7 @@
 
         </div>
     </div>
+{% endif %}
 </div>
 
 <script src="{{ url_for('static', filename='js/login.js') }}" defer></script>
