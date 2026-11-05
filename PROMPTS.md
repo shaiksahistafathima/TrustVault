@@ -141,3 +141,31 @@ Commit:
 - A code or documentation change is not automatically proof that every related security requirement has been satisfied.
 - Security claims must be supported by implementation review and tests.
 - Further AI interactions and corrections should be added with their real dates as development continues.
+
+
+---
+
+## Entry 6 - 2026-11-05: Expand authorization tests and clarify audit limitations
+
+### 1. Prompt summary
+During the continued security review, I worked through additional authorization tests and asked for the documentation to reflect the actual limits of the audit hash chain.
+
+### 2. AI-assisted output
+The work added tests covering:
+- EDIT users attempting owner-only permission and deletion operations.
+- Non-admin access to administrator pages.
+- Outsider access to confidential document details and search results.
+- Viewer attempts to delete, share, revoke, or upload documents.
+
+The audit documentation was also clarified to explain the limitation around deletion of the latest records without an independently retained checkpoint.
+
+### 3. Issue identified
+Authorization must be enforced by the server for each protected operation, not merely hidden in the user interface. Earlier tests did not cover all of these role and route combinations.
+
+The audit hash chain also cannot independently guarantee detection of every possible tail deletion.
+
+### 4. Corrective action
+Additional authorization tests were added and the audit limitations were documented honestly. The full test suite was subsequently verified with 29 passing tests.
+
+Commit:
+[ 5a1a331 - Expand authorization tests and clarify audit limits ](https://github.com/shaiksahistafathima/TrustVault/commit/5a1a331)
