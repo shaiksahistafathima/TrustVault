@@ -58,8 +58,11 @@ def audit_view():
 @roles_required("ADMIN")
 def audit_verify():
     """
-    Verifies the entire cryptographic SHA-256 hash chain from genesis to head.
-    Detects any row alteration, row deletion, or sequence tampering.
+    Verifies the stored SHA-256 audit hash chain from genesis to head.
+    Detects changes to recorded entries, broken hash links, and sequence gaps.
+    Limitation: deletion of the final record(s) may not be detectable without
+    an independently stored trusted checkpoint. An attacker able to rewrite
+    the entire database may be able to reconstruct the chain.
     """
     user = g.user
     verification_result = verify_audit_chain()
