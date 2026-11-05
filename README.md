@@ -90,7 +90,7 @@ Open **http://127.0.0.1:5000** in your browser.
 
 ## 🧪 Automated Security Test Suite
 
-The test suite contains **29 automated tests** covering access control, audit integrity, CSRF protection, upload validation, and permission revocation:
+The test suite contains **33 automated tests** covering access control, audit integrity, CSRF protection, upload validation, and permission revocation:
 
 ```bash
 python -m unittest discover -s tests

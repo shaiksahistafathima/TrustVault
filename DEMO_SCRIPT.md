@@ -1,4 +1,4 @@
-# TrustVault — 5-Minute Demo Video Script (DEMO_SCRIPT.md)
+﻿# TrustVault — 5-Minute Demo Video Script (DEMO_SCRIPT.md)
 
 Use this exact structure to record your 5-minute demo video. Following this script ensures you showcase all required criteria and directly address the evaluation rubric.
 
@@ -8,9 +8,9 @@ Use this exact structure to record your 5-minute demo video. Following this scri
 - **Camera / Voice**: Introduce yourself and the mission of TrustVault.
 - **Key Talking Points**:
   - *"TrustVault is not a generic file sharing CRUD app. It is a zero-trust document security platform designed around three non-negotiable invariants:"*
-  1. **Zero Unpermitted Reachability**: No static URLs, no direct S3 links. The server verifies access on every byte.
+  1. **Zero Unpermitted Reachability**: No static URLs, no direct S3 links. The server checks live permissions before streaming each new download request.
   2. **Tamper-Evident Auditability**: Every access, including denied 403 breach attempts, is linked in a SHA-256 cryptographic hash chain.
-  3. **Deterministic Instant Revocation**: Taking access away stops downloads within milliseconds.
+  3. **Deterministic Instant Revocation**: After access is revoked, subsequent download requests are denied.
 
 ---
 
@@ -48,7 +48,7 @@ Use this exact structure to record your 5-minute demo video. Following this scri
 - **Action 4**: Immediately switch back to Viewer window -> Click **Download Secure File** again.
 - **Result**: Immediate **403 Forbidden**!
 - **Talking Point**:
-  - *"Because we avoided static pre-signed URLs with expiration windows and evaluate permissions on live database records, revocation is instantaneous down to the millisecond."*
+  - *"Because we avoided static pre-signed URLs with expiration windows and evaluate permissions on live database records, revocation is enforced on subsequent requests using live database permissions."*
 
 ---
 
@@ -64,7 +64,7 @@ Use this exact structure to record your 5-minute demo video. Following this scri
 ### Minute 4:30 – 5:00: Automated Security Tests & Conclusion
 - **Screen**: Open the terminal.
 - **Action**: Run `python -m unittest discover -s tests`.
-  - Show the 14 passing adversarial security tests.
+  - Show the previously verified result: 33 automated tests passed.
 - **Final Talking Point**:
-  - *"We have 14 automated tests covering IDOR, instant revocation, magic-byte spoofing, and audit tamper detection. If any developer removes a single authorization check, these tests fail instantly. All threats are cataloged in `THREATS.md`, and all AI debugging history is documented in `PROMPTS.md`."*
+  - *"We have 33 automated tests covering IDOR, instant revocation, magic-byte spoofing, and audit tamper detection. If any developer removes a single authorization check, these tests fail instantly. All threats are cataloged in `THREATS.md`, and all AI debugging history is documented in `PROMPTS.md`."*
 - **Closing**: Thank the evaluators.
