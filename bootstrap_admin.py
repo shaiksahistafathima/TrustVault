@@ -83,6 +83,40 @@ def create_initial_admin(email, full_name, password):
     }
 
 
+
+def bootstrap_admin_from_environment():
+    """Create the first production administrator from private environment variables."""
+
+    if os.environ.get("TRUSTVAULT_ENV", "").lower() != "production":
+        return False
+
+    password = os.environ.pop("TRUSTVAULT_BOOTSTRAP_ADMIN_PASSWORD", "")
+    email = os.environ.get("TRUSTVAULT_BOOTSTRAP_ADMIN_EMAIL", "").strip()
+    full_name = os.environ.get("TRUSTVAULT_BOOTSTRAP_ADMIN_NAME", "").strip()
+
+    from app.database import init_db, get_db
+
+    init_db()
+    with get_db() as conn:
+        existing_user = conn.execute(
+            "SELECT 1 FROM users LIMIT 1"
+        ).fetchone()
+
+    if existing_user:
+        print("TrustVault administrator already exists. Bootstrap skipped.")
+        return False
+
+    if not email or not full_name or not password:
+        raise RuntimeError(
+            "Configure all three TRUSTVAULT_BOOTSTRAP_ADMIN environment variables."
+        )
+
+    admin = create_initial_admin(email, full_name, password)
+
+    print("TrustVault initial administrator created:", admin["email"])
+    return True
+
+
 def main():
     if os.environ.get("TRUSTVAULT_ENV", "").lower() != "production":
         print("ERROR: This command is only allowed in production mode.")

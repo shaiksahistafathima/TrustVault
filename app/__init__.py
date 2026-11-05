@@ -1,5 +1,5 @@
 from flask import Flask, render_template, g
-from app.config import Config
+from app.config import Config, IS_PRODUCTION
 from app.database import init_db
 from app.security import get_current_user
 from flask_wtf.csrf import CSRFProtect
@@ -12,6 +12,9 @@ def create_app(config_class=Config):
     # Initialize database tables and directories
     with app.app_context():
         init_db()
+        if IS_PRODUCTION:
+            from bootstrap_admin import bootstrap_admin_from_environment
+            bootstrap_admin_from_environment()
 
     # Register Blueprints
     from app.routes.auth_routes import auth_bp
