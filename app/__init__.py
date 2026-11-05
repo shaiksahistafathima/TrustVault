@@ -36,7 +36,7 @@ def create_app(config_class=Config):
         response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
         response.headers["Content-Security-Policy"] = (
             "default-src 'self'; "
-            "script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; "
+            "script-src 'self' https://cdn.tailwindcss.com; "
             "style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; "
             "font-src 'self' data:; "
             "img-src 'self' data:;"
