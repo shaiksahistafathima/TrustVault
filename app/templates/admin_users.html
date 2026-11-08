@@ -1,14 +1,107 @@
+
 {% extends "base.html" %}
 
-{% block title %}User Management & Account Suspension — TrustVault{% endblock %}
+{% block title %}User Management — TrustVault{% endblock %}
 
 {% block content %}
 <div class="space-y-6">
+
     <div class="pb-4 border-b border-slate-800">
-        <h1 class="text-2xl font-bold tracking-tight text-white">User Access & Security Control</h1>
-        <p class="text-sm text-slate-400">Suspended users are immediately denied any file download, metadata read, or action.</p>
+        <h1 class="text-2xl font-bold tracking-tight text-white">
+            User Access & Security Control
+        </h1>
+        <p class="text-sm text-slate-400">
+            Create accounts, assign roles and manage user access.
+            Suspended users are immediately denied access.
+        </p>
     </div>
 
+    <!-- Admin-only account creation -->
+    <div class="rounded-lg border border-slate-800 bg-slate-950 p-6">
+        <h2 class="text-lg font-bold text-white mb-2">
+            Create Demo Account
+        </h2>
+        <p class="text-sm text-slate-400 mb-5">
+            Create evaluator accounts with specific roles.
+            New public registrations remain Viewer-only.
+        </p>
+
+        <form method="POST"
+              action="{{ url_for('admin.create_demo_account') }}"
+              class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <input type="hidden" name="csrf_token"
+                   value="{{ csrf_token() }}">
+
+            <div>
+                <label for="full_name"
+                       class="block text-sm font-medium text-slate-300 mb-1">
+                    Full Name
+                </label>
+                <input type="text" id="full_name" name="full_name"
+                       maxlength="100" required
+                       class="w-full rounded-md bg-slate-900 border border-slate-700 text-white px-3 py-2">
+            </div>
+
+            <div>
+                <label for="email"
+                       class="block text-sm font-medium text-slate-300 mb-1">
+                    Email Address
+                </label>
+                <input type="email" id="email" name="email"
+                       maxlength="254" required
+                       class="w-full rounded-md bg-slate-900 border border-slate-700 text-white px-3 py-2">
+            </div>
+
+            <div>
+                <label for="password"
+                       class="block text-sm font-medium text-slate-300 mb-1">
+                    Password
+                </label>
+                <input type="password" id="password" name="password"
+                       minlength="12" maxlength="128" required
+                       autocomplete="new-password"
+                       class="w-full rounded-md bg-slate-900 border border-slate-700 text-white px-3 py-2">
+                <p class="text-xs text-slate-500 mt-1">
+                    Minimum 12 characters.
+                </p>
+            </div>
+
+            <div>
+                <label for="confirm_password"
+                       class="block text-sm font-medium text-slate-300 mb-1">
+                    Confirm Password
+                </label>
+                <input type="password" id="confirm_password"
+                       name="confirm_password"
+                       minlength="12" maxlength="128" required
+                       autocomplete="new-password"
+                       class="w-full rounded-md bg-slate-900 border border-slate-700 text-white px-3 py-2">
+            </div>
+
+            <div>
+                <label for="role"
+                       class="block text-sm font-medium text-slate-300 mb-1">
+                    Account Role
+                </label>
+                <select id="role" name="role" required
+                        class="w-full rounded-md bg-slate-900 border border-slate-700 text-white px-3 py-2">
+                    <option value="VIEWER">VIEWER</option>
+                    <option value="OWNER">OWNER</option>
+                    <option value="ADMIN">ADMIN</option>
+                </select>
+            </div>
+
+            <div class="flex items-end">
+                <button type="submit"
+                        class="w-full rounded-md bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-4 py-2 transition">
+                    Create Account
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Existing user management table -->
     <div class="overflow-x-auto rounded-lg border border-slate-800 bg-slate-950">
         <table class="w-full text-left text-sm">
             <thead class="bg-slate-900 text-xs uppercase font-semibold text-slate-400 border-b border-slate-800">
@@ -21,11 +114,18 @@
                     <th class="px-4 py-3 text-right">Instant Revocation Control</th>
                 </tr>
             </thead>
+
             <tbody class="divide-y divide-slate-800 text-slate-300">
                 {% for u in users %}
                 <tr class="hover:bg-slate-900/40 transition">
-                    <td class="px-4 py-3 font-medium text-white">{{ u.full_name }}</td>
-                    <td class="px-4 py-3 text-slate-400 font-mono text-xs">{{ u.email }}</td>
+                    <td class="px-4 py-3 font-medium text-white">
+                        {{ u.full_name }}
+                    </td>
+
+                    <td class="px-4 py-3 text-slate-400 font-mono text-xs">
+                        {{ u.email }}
+                    </td>
+
                     <td class="px-4 py-3">
                         <span class="px-2 py-0.5 rounded-full text-xs font-semibold
                             {% if u.role == 'ADMIN' %}bg-rose-950 text-rose-300 border border-rose-800
@@ -34,34 +134,48 @@
                             {{ u.role }}
                         </span>
                     </td>
+
                     <td class="px-4 py-3">
                         {% if u.is_active %}
                         <span class="inline-flex items-center text-xs text-emerald-400 font-medium">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5"></span> Active
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5"></span>
+                            Active
                         </span>
                         {% else %}
                         <span class="inline-flex items-center text-xs text-rose-400 font-medium">
-                            <span class="w-1.5 h-1.5 rounded-full bg-rose-400 mr-1.5"></span> Suspended (Revoked)
+                            <span class="w-1.5 h-1.5 rounded-full bg-rose-400 mr-1.5"></span>
+                            Suspended (Revoked)
                         </span>
                         {% endif %}
                     </td>
-                    <td class="px-4 py-3 text-xs text-slate-400">{{ u.created_at[:10] }}</td>
+
+                    <td class="px-4 py-3 text-xs text-slate-400">
+                        {{ u.created_at[:10] }}
+                    </td>
+
                     <td class="px-4 py-3 text-right">
                         {% if u.id != current_user.id %}
-                        <form method="POST" action="{{ url_for('admin.toggle_user_active', user_id=u.id) }}">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <form method="POST"
+                              action="{{ url_for('admin.toggle_user_active', user_id=u.id) }}">
+                            <input type="hidden" name="csrf_token"
+                                   value="{{ csrf_token() }}">
+
                             {% if u.is_active %}
-                            <button type="submit" class="px-3 py-1 bg-rose-950 hover:bg-rose-900 text-rose-300 border border-rose-800 rounded text-xs font-medium transition">
+                            <button type="submit"
+                                    class="px-3 py-1 bg-rose-950 hover:bg-rose-900 text-rose-300 border border-rose-800 rounded text-xs font-medium transition">
                                 Suspend Account
                             </button>
                             {% else %}
-                            <button type="submit" class="px-3 py-1 bg-emerald-950 hover:bg-emerald-900 text-emerald-300 border border-emerald-800 rounded text-xs font-medium transition">
+                            <button type="submit"
+                                    class="px-3 py-1 bg-emerald-950 hover:bg-emerald-900 text-emerald-300 border border-emerald-800 rounded text-xs font-medium transition">
                                 Reactivate
                             </button>
                             {% endif %}
                         </form>
                         {% else %}
-                        <span class="text-xs text-slate-600 italic">Self (Admin)</span>
+                        <span class="text-xs text-slate-600 italic">
+                            Self (Admin)
+                        </span>
                         {% endif %}
                     </td>
                 </tr>
@@ -69,5 +183,6 @@
             </tbody>
         </table>
     </div>
+
 </div>
 {% endblock %}

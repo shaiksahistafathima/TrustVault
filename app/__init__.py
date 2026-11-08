@@ -1,8 +1,11 @@
+
 from flask import Flask, render_template, g
 from app.config import Config, IS_PRODUCTION
 from app.database import init_db
 from app.security import get_current_user
 from flask_wtf.csrf import CSRFProtect
+
+
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
@@ -64,6 +67,22 @@ def create_app(config_class=Config):
 
     @app.errorhandler(500)
     def server_error(e):
+        original_error = getattr(e, "original_exception", None)
+
+        if original_error:
+            app.logger.error(
+                "TrustVault internal server error:",
+                exc_info=(
+                    type(original_error),
+                    original_error,
+                    original_error.__traceback__
+                )
+            )
+        else:
+            app.logger.error(
+                "TrustVault internal server error: %s", e
+            )
+
         return render_template("errors/500.html"), 500
 
     return app
