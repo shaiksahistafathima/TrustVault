@@ -1,0 +1,86 @@
+
+{% extends "base.html" %}
+
+{% block title %}Create Account — TrustVault{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto my-12 bg-slate-950 p-8 rounded-xl border border-slate-800 shadow-2xl">
+
+    <div class="text-center mb-6">
+        <h1 class="text-2xl font-bold tracking-tight text-white">
+            Create Your Account
+        </h1>
+        <p class="text-sm text-slate-400 mt-1">
+            Join TrustVault secure document sharing
+        </p>
+    </div>
+
+    <form method="POST" action="{{ url_for('auth.register') }}" class="space-y-4">
+
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div>
+            <label for="full_name" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                Full Name
+            </label>
+            <input type="text" id="full_name" name="full_name"
+                maxlength="100" required
+                autocomplete="name"
+                class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+        </div>
+
+        <div>
+            <label for="email" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                Email Address
+            </label>
+            <input type="email" id="email" name="email"
+                maxlength="254" required
+                autocomplete="email"
+                class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+        </div>
+
+        <div>
+            <label for="password" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                Password
+            </label>
+            <input type="password" id="password" name="password"
+                minlength="12" maxlength="128" required
+                autocomplete="new-password"
+                class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+            <p class="text-xs text-slate-500 mt-1">
+                Use at least 12 characters.
+            </p>
+        </div>
+
+        <div>
+            <label for="confirm_password" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                Confirm Password
+            </label>
+            <input type="password" id="confirm_password" name="confirm_password"
+                minlength="12" maxlength="128" required
+                autocomplete="new-password"
+                class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+        </div>
+
+        <button type="submit"
+            class="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 rounded-lg font-medium text-white transition text-sm">
+            Create Account
+        </button>
+    </form>
+
+    <div class="mt-6 text-center border-t border-slate-800 pt-5">
+        <p class="text-sm text-slate-400">
+            Already have an account?
+            <a href="{{ url_for('auth.login') }}"
+                class="text-indigo-400 hover:text-indigo-300 font-medium">
+                Sign In
+            </a>
+        </p>
+    </div>
+
+    <p class="text-xs text-slate-500 text-center mt-5">
+        New accounts receive Viewer access by default.
+    </p>
+
+</div>
+{% endblock %}
