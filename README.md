@@ -11,7 +11,7 @@ Demo accounts are created locally by running `python seed.py`. These credentials
 
 | Role | Email Address | Password | Permissions & Scope |
 | :--- | :--- | :--- | :--- |
-| **Administrator** | `admin@trustvault.local` | `AdminSecure2026!` | Views system-wide audit telemetry, verifies cryptographic hash chain integrity, and can suspend or reactivate user accounts. |
+| **Administrator** | `admin@trustvault.local` | `123456789100` | Views system-wide audit telemetry, verifies cryptographic hash chain integrity, and can suspend or reactivate user accounts. |
 | **Document Owner** | `owner@trustvault.local` | `OwnerSecure2026!` | Uploads documents, manages metadata, grants named `READ`/`EDIT` permissions, and revokes access for subsequent requests. |
 | **Viewer** | `viewer@trustvault.local` | `ViewerSecure2026!` | Granted `READ` access to `Master_Services_Agreement.pdf`. Has zero access to unshared files. |
 | **Outsider** | `outsider@trustvault.local` | `OutsiderSecure2026!` | Zero permissions granted. Used to demonstrate that unauthorized access attempts are blocked and logged. |
